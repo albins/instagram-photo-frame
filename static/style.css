@@ -1,0 +1,16 @@
+body {
+    margin: 0;
+}
+
+div#content {
+    background-color: #4e4b5c;
+    object-fit: contain;
+    width: 100%;
+    height: 100vh;
+}
+
+img#current-slide {
+    object-fit: contain;
+    widht: 100%;
+    height: 100%;
+}
