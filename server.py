@@ -1,17 +1,13 @@
 #!/usr/bin/env python3
 
-import argparse
 import asyncio
 import collections
-import datetime
 import getpass
 import json
 import mimetypes
 import os
 import os.path
-import pprint
 import threading
-import time
 from contextlib import asynccontextmanager
 
 import aiohttp
