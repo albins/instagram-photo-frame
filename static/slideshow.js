@@ -35,15 +35,21 @@ function setup() {
     // set up a timer to continuously reload the feed:
     setInterval(getFeed, FEED_REFRESH_INTERVAL_MS);
 
-    $('#content').click(function() {openFullscreen(document.body)});
+    document.getElementById("content")
+        .onclick = () => {openFullscreen(document.body)};
 }
 
 function cycleImages(current_image, images) {
-    console.log(images);
     clearTimeout(imageTimeout);
     wrapped_index = current_image % images.length;
-    const container_div = $('#content');
-    container_div.html(images[wrapped_index]);
+    const container_div = document.getElementById("content");
+    if(container_div.firstChild) {
+        container_div.replaceChild(images[wrapped_index],
+                                   container_div.firstChild)
+    } else {
+        container_div.appendChild(images[wrapped_index]);
+    }
+
     imageTimeout = setTimeout(function()
                               {cycleImages(current_image + 1, images)},
                               IMAGE_SWITCH_INTERVAL_MS);
@@ -63,5 +69,5 @@ function openFullscreen(elem) {
     }
 }
 
+document.addEventListener("DOMContentLoaded", setup);
 
-$(document).ready(setup);
