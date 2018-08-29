@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: future_fstrings -*-
 
 import asyncio
 import collections
@@ -8,7 +9,7 @@ import mimetypes
 import os
 import os.path
 import threading
-from contextlib import asynccontextmanager
+from async_generator import asynccontextmanager, async_generator, yield_
 
 import aiohttp
 from aiohttp import web
@@ -179,6 +180,7 @@ async def handle_2factor(session, login_response, username):
 
 
 @asynccontextmanager
+@async_generator 
 async def login_session(credential):
     async with aiohttp.ClientSession(
             headers={'Referer': 'https://www.instagram.com/'}) as session:
@@ -192,7 +194,7 @@ async def login_session(credential):
             await handle_2factor(session, login_response,
                                  credential['username'])
 
-        yield session
+        await yield_(session)
 
 
 def ask_for_credentials():

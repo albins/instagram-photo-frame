@@ -1,0 +1,10 @@
+[Unit]
+Description=Instagram Picture Frame Web Server
+
+[Service]
+User=pi
+WorkingDirectory=/home/pi/instagram-photo-frame
+ExecStart=/home/pi/venv/instagram/bin/python server.py
+
+[Install]
+WantedBy=multi-user.target
