@@ -1,8 +1,8 @@
 let imageTimeout;
 
-// Alla lets som du inte tänker mutera borde vara `const`.
-const IMAGE_SWITCH_INTERVAL_MS = 1000;
-const FEED_REFRESH_INTERVAL_MS = 15000; 
+const IMAGE_SWITCH_INTERVAL_MS = 10000;
+const FEED_REFRESH_INTERVAL_MS = 600000; 
+const DOCUMENT_REFRESH_INTERVAL_MS = 4 * 60 * 60 * 1000;
 
 function extractImage(post) {
     const id = post.id;
@@ -13,20 +13,11 @@ function extractImage(post) {
     return img;
 }
 
-function extractFeed(posts) {
-    let images = [];
-    posts.forEach((post) => {
-        images.push(extractImage(post));
-    });
-    return images;
-}
-
 function getFeed() {
     fetch("/feed")
         .then((response) => {return response.json()})
         .then((posts) => {
-            const images = extractFeed(posts);
-            cycleImages(0, images);
+            cycleImages(0, posts.map(post => extractImage(post)));
         });
 }
 
@@ -34,6 +25,9 @@ function setup() {
     getFeed();
     // set up a timer to continuously reload the feed:
     setInterval(getFeed, FEED_REFRESH_INTERVAL_MS);
+
+    setInterval(() => {location.reload(true)},
+                DOCUMENT_REFRESH_INTERVAL_MS);
 
     document.getElementById("content")
         .onclick = () => {openFullscreen(document.body)};
