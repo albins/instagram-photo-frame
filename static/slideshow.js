@@ -1,37 +1,53 @@
-
 let imageTimeout;
-let IMAGE_SWITCH_INTERVAL_MS = 1000;
-let FEED_REFRESH_INTERVAL_MS = 15000; 
 
-function extractImage(images, post) {
-    let id = post.id;
-    let image_url = "/image/" + id;
-    let img = new Image();
+// Alla lets som du inte tänker mutera borde vara `const`.
+const IMAGE_SWITCH_INTERVAL_MS = 1000;
+const FEED_REFRESH_INTERVAL_MS = 15000; 
+
+function extractImage(post) {
+    const id = post.id;
+    const image_url = "/image/" + id;
+    const img = new Image(); // Bara själva referensen som är constant, inte properties
     img.src = image_url;
     img.id = "current-slide";
-    images.push(img);
+    
+    // Det känns märkligt att pusha något till en parameter du får in.
+    // Du borde returnera för att undvika mutation så mycket som möjligt
+    //images.push(img);
+    
+    return img;
 }
 
-function extractFeed(posts, feed_processor) {
+function extractFeed(posts) {
     let images = [];
-    posts.forEach(function(post) {extractImage(images, post)});
-    feed_processor(images);
+    posts.forEach((post) => {
+        images.push(extractImage(post));
+    });
+    
+    // Behöver du verkligen skicka med feed_processor hela vägen, kan du inte
+    // bara returnera och anropa cycleImages senare?
+    // feed_processor(images);
+    
+    return images;
 }
 
-function getFeed(feed_processor) {
-    $.ajax({url: "/feed"})
-        .then(function(posts) {extractFeed(posts, feed_processor)});
+function getFeed() {
+    // Här borde du kunna använda `fetch` istället, men spelar väl ingen större roll
+    fetch("/feed")
+        .then((posts) => {
+            const images = extractFeed(posts);
+            cycleImages(0, images);
+        });
 }
 
 function setup() {
-    function start_cycling_images(images) {
+    /* function start_cycling_images(images) {
         cycleImages(0, images);
-    }
+    }*/
 
-    getFeed(start_cycling_images);
+    getFeed();
     // set up a timer to continuously reload the feed:
-    setInterval(function() {getFeed(start_cycling_images)},
-                FEED_REFRESH_INTERVAL_MS);
+    setInterval(getFeed, FEED_REFRESH_INTERVAL_MS);
 
     $('#content').click(function() {openFullscreen(document.body)});
 }
@@ -39,7 +55,7 @@ function setup() {
 function cycleImages(current_image, images) {
     clearTimeout(imageTimeout);
     wrapped_index = current_image % images.length;
-    let container_div = $('#content');
+    const container_div = $('#content');
     container_div.html(images[wrapped_index]);
     imageTimeout = setTimeout(function()
                               {cycleImages(current_image + 1, images)},
