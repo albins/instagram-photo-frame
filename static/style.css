@@ -7,10 +7,13 @@ div#content {
     object-fit: contain;
     width: 100%;
     height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 img#current-slide {
     object-fit: contain;
-    widht: 100%;
-    height: 100%;
+    width: 80%;
+    height: 80vh;
 }
