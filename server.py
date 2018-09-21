@@ -19,7 +19,7 @@ async def get_image(request):
     image_id = request.match_info['image_id']
     file_name = f"{image_id}.jpeg"
 
-    ringbuffer = request.app['ringbuffer']
+    ringbuffer = read_or_create_ringbuffer(25)
     for post in ringbuffer:
         if post['id'] == image_id:
             break
@@ -48,9 +48,7 @@ async def get_index(request):
 
 
 def init_webapp():
-    ringbuffer = read_or_create_ringbuffer(25)
     app = web.Application()
-    app['ringbuffer'] = ringbuffer
     routes.static('/', "static")
     app.add_routes(routes)
     return app
