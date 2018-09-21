@@ -7,7 +7,7 @@ import aiofiles
 import aiohttp
 from aiohttp import web
 
-from shared import dict_without, read_or_create_ringbuffer
+from shared import dict_without, read_ringbuffer
 
 FIELDS_TO_DROP = ['image url']
 
@@ -19,7 +19,7 @@ async def get_image(request):
     image_id = request.match_info['image_id']
     file_name = f"{image_id}.jpeg"
 
-    ringbuffer = read_or_create_ringbuffer(25)
+    ringbuffer = read_ringbuffer()
     for post in ringbuffer:
         if post['id'] == image_id:
             break
@@ -36,10 +36,8 @@ async def get_image(request):
 
 @routes.get('/feed')
 async def get_feed(request):
-    return web.json_response([
-        dict_without(post, *FIELDS_TO_DROP)
-        for post in request.app['ringbuffer']
-    ])
+    return web.json_response(
+        [dict_without(post, *FIELDS_TO_DROP) for post in read_ringbuffer()])
 
 
 @routes.get('/')
