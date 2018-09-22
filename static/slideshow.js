@@ -1,7 +1,7 @@
 let imageTimeout;
 
-const IMAGE_SWITCH_INTERVAL_MS = 10000;
-const FEED_REFRESH_INTERVAL_MS = 600000; 
+const IMAGE_SWITCH_INTERVAL_MS = 10 * 1000;
+const FEED_REFRESH_INTERVAL_MS = 1000 * 60 * 60;
 
 function extractImage(post) {
     const id = post.id;
