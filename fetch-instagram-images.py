@@ -143,7 +143,10 @@ def ask_for_credentials():
 def delete_image(post):
     if not os.path.isdir("images"):
         return
-    os.remove(post_filename(post))
+    try:
+        os.remove(post_filename(post))
+    except Exception as e:
+        print(e)
 
 
 async def handle_new_post(ringbuffer, post, session):
@@ -156,11 +159,21 @@ async def handle_new_post(ringbuffer, post, session):
             delete_image(maybe_expunged)
 
 
+def remove_missing_images(ringbuffer):
+    for idx, post in enumerate(ringbuffer):
+        if not os.path.exists(post_filename(post)):
+            print(f"Removing missing image {post_filename(post)}")
+            del ringbuffer[idx]
+
+    return ringbuffer
+
+
 async def main():
     credentials = ask_for_credentials() if not get_credentials() \
         else get_credentials()
 
-    ringbuffer = read_or_create_ringbuffer(buffer_length=BUFFER_LENGTH)
+    ringbuffer = remove_missing_images(
+        read_or_create_ringbuffer(buffer_length=BUFFER_LENGTH))
 
     async with login_session(credentials) as session:
         print("Fetching feed...")
