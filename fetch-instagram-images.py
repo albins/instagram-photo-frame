@@ -11,7 +11,7 @@ import aiofiles
 import aiohttp
 from async_generator import async_generator, asynccontextmanager, yield_
 
-from shared import read_or_create_ringbuffer
+from shared import read_or_create_ringbuffer, RingBuffer
 
 INSTAGRAM_HEADERS = {
     'user-agent':
@@ -160,7 +160,7 @@ async def handle_new_post(ringbuffer, post, session):
 
 
 def remove_missing_images(ringbuffer):
-    return shared.RingBuffer(
+    return RingBuffer(
         [post for post in ringbuffer if os.path.exists(post_filename(post))],
         maxlen=ringbuffer.maxlen)
 
