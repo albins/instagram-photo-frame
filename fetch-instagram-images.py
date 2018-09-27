@@ -160,17 +160,9 @@ async def handle_new_post(ringbuffer, post, session):
 
 
 def remove_missing_images(ringbuffer):
-    idx_to_remove = []
-
-    for idx, post in enumerate(ringbuffer):
-        if not os.path.exists(post_filename(post)):
-            print(f"Removing missing image {post_filename(post)}")
-            idx_to_remove.append(idx)
-
-    for idx in idx_to_remove:
-        del ringbuffer[idx]
-
-    return ringbuffer
+    return shared.RingBuffer(
+        [post for post in ringbuffer if os.path.exists(post_filename(post))],
+        maxlen=ringbuffer.maxlen)
 
 
 async def main():
